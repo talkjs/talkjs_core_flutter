@@ -661,7 +661,7 @@ private class PigeonApiImplementation : CoreHostApi {
     override fun userOnlineSubscriptionUnsubscribe(handle: Long) {
         val subscription = userOnlineSubscriptions[handle] ?: throw FlutterError(
             "null-error",
-            "Invalid user subscription handle $handle",
+            "Invalid user online subscription handle $handle",
             "",
         )
 
@@ -1467,6 +1467,7 @@ private class PigeonApiImplementation : CoreHostApi {
         }
     }
 
+    // Message
     override fun messageDeleteHandle(handle: Long) {
         println("Kotlin: messageDeleteHandle $handle")
 
@@ -1619,6 +1620,7 @@ private class PigeonApiImplementation : CoreHostApi {
         return reactionHandle
     }
 
+    // Reaction
     override fun reactionDeleteHandle(handle: Long) {
         println("Kotlin: reactionDeleteHandle $handle")
 
@@ -1671,6 +1673,7 @@ private class PigeonApiImplementation : CoreHostApi {
         }
     }
 
+    // Test endpoints
     override fun testContentSerialization(contentJson: String): String {
         val content = jsonFormat.decodeFromString<List<ContentBlock>>(contentJson)
 

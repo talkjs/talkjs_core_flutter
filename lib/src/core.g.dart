@@ -528,18 +528,17 @@ class CoreHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        appId,
-        userId,
-        token,
-        forceCreateNew,
-        signature,
-        apiUrls,
-        host,
-        clientBuild,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          appId,
+          userId,
+          token,
+          forceCreateNew,
+          signature,
+          apiUrls,
+          host,
+          clientBuild,
+        ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -943,20 +942,19 @@ class CoreHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        handle,
-        name,
-        custom,
-        locale,
-        photoUrl,
-        role,
-        welcomeMessage,
-        email,
-        phone,
-        pushTokens,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          handle,
+          name,
+          custom,
+          locale,
+          photoUrl,
+          role,
+          welcomeMessage,
+          email,
+          phone,
+          pushTokens,
+        ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -985,20 +983,19 @@ class CoreHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        handle,
-        name,
-        custom,
-        locale,
-        photoUrl,
-        role,
-        welcomeMessage,
-        email,
-        phone,
-        pushTokens,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          handle,
+          name,
+          custom,
+          locale,
+          photoUrl,
+          role,
+          welcomeMessage,
+          email,
+          phone,
+          pushTokens,
+        ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
