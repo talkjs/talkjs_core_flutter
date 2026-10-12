@@ -7,6 +7,9 @@ import 'package:pigeon/pigeon.dart';
     kotlinOut:
         'android/src/main/kotlin/com/example/talkjs_core_flutter/Core.g.kt',
     kotlinOptions: KotlinOptions(package: 'com.example.talkjs_core_flutter'),
+    swiftOut:
+        'ios/talkjs_core_flutter/Sources/talkjs_core_flutter/Core.g.swift',
+    swiftOptions: SwiftOptions(),
     dartPackageName: 'talkjs_core_flutter',
   ),
 )

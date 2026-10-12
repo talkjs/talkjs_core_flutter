@@ -44,8 +44,8 @@ flutter:
       android:
         package: com.example.talkjs_core_flutter
         pluginClass: TalkjsCoreFlutterPlugin
-      #ios:
-      #  pluginClass: TalkjsCoreFlutterPlugin
+      ios:
+        pluginClass: TalkjsCoreFlutterPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
