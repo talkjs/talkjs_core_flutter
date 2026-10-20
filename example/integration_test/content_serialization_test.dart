@@ -8,7 +8,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Content serialization', () {
-    testWidgets('round-trips through Kotlin', (tester) async {
+    testWidgets('round-trips through Native', (tester) async {
       final content = <ContentBlock>[
         TextBlock(
           children: [
@@ -86,7 +86,7 @@ void main() {
 
         expect(roundTrippedContent, content);
       } on PlatformException catch (e) {
-        fail('Kotlin-side failure: ${e.message}');
+        fail('Native-side failure: ${e.message}');
       }
     });
   });

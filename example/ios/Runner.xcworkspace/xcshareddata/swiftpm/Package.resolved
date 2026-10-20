@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "talkjs-core-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/talkjs/talkjs-core-swift.git",
+      "state" : {
+        "revision" : "154e2076a570632c0cb75ea6064742ddff1ffaca",
+        "version" : "0.0.4"
+      }
+    }
+  ],
+  "version" : 2
+}
