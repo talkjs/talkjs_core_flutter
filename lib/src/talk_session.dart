@@ -219,11 +219,11 @@ class TalkSession {
   ///
   /// If the file is a video, image, audio file, or voice recording, use one of the other functions like [uploadImage] instead.
   ///
-  /// @param data The binary file data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
+  /// @param bytes The binary file data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
   /// @param metadata Information about the file
   /// @return A file token that can be used to send the file in a message.
-  Future<String> uploadFile(Uint8List data, GenericFileMetadata metadata) {
-    return _api.sessionUploadFile(_handle, data, metadata);
+  Future<String> uploadFile(Uint8List bytes, GenericFileMetadata metadata) {
+    return _api.sessionUploadFile(_handle, bytes, metadata);
   }
 
   /// Upload an image with image-specific metadata.
@@ -231,11 +231,11 @@ class TalkSession {
   /// @remarks
   /// This is a variant of [TalkSession.uploadFile] used for images.
   ///
-  /// @param data The binary image data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
+  /// @param bytes The binary image data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
   /// @param metadata Information about the image.
   /// @return A file token that can be used to send the image in a message.
-  Future<String> uploadImage(Uint8List data, ImageFileMetadata metadata) {
-    return _api.sessionUploadImage(_handle, data, metadata);
+  Future<String> uploadImage(Uint8List bytes, ImageFileMetadata metadata) {
+    return _api.sessionUploadImage(_handle, bytes, metadata);
   }
 
   /// Upload a video with video-specific metadata.
@@ -243,11 +243,11 @@ class TalkSession {
   /// @remarks
   /// This is a variant of [TalkSession.uploadFile] used for videos.
   ///
-  /// @param data The binary video data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
+  /// @param bytes The binary video data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
   /// @param metadata Information about the video.
   /// @return A file token that can be used to send the video in a message.
-  Future<String> uploadVideo(Uint8List data, VideoFileMetadata metadata) {
-    return _api.sessionUploadVideo(_handle, data, metadata);
+  Future<String> uploadVideo(Uint8List bytes, VideoFileMetadata metadata) {
+    return _api.sessionUploadVideo(_handle, bytes, metadata);
   }
 
   /// Upload an audio file with audio-specific metadata.
@@ -255,11 +255,11 @@ class TalkSession {
   /// @remarks
   /// This is a variant of [TalkSession.uploadFile] used for audio files.
   ///
-  /// @param data The binary audio data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
+  /// @param bytes The binary audio data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
   /// @param metadata Information about the audio file.
   /// @return A file token that can be used to send the audio file in a message.
-  Future<String> uploadAudio(Uint8List data, AudioFileMetadata metadata) {
-    return _api.sessionUploadAudio(_handle, data, metadata);
+  Future<String> uploadAudio(Uint8List bytes, AudioFileMetadata metadata) {
+    return _api.sessionUploadAudio(_handle, bytes, metadata);
   }
 
   /// Upload a voice recording with voice-specific metadata.
@@ -267,14 +267,14 @@ class TalkSession {
   /// @remarks
   /// This is a variant of [TalkSession.uploadFile] used for voice recordings.
   ///
-  /// @param data The binary audio data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
+  /// @param bytes The binary audio data. Usually a [File](https://developer.mozilla.org/en-US/docs/Web/API/File).
   /// @param metadata Information about the voice recording.
   /// @return A file token that can be used to send the audio file in a message.
   Future<String> uploadVoice(
-    Uint8List data,
+    Uint8List bytes,
     VoiceRecordingFileMetadata metadata,
   ) {
-    return _api.sessionUploadVoice(_handle, data, metadata);
+    return _api.sessionUploadVoice(_handle, bytes, metadata);
   }
 
   TalkSession._({

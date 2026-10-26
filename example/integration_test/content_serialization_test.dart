@@ -75,7 +75,7 @@ void main() {
 
       final originalJson = serializeContent(content);
 
-      final api = CoreHostApi();
+      final api = TestHostApi();
 
       try {
         final roundTrippedJson = await api.testContentSerialization(

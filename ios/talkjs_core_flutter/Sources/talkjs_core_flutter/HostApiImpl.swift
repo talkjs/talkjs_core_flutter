@@ -169,7 +169,7 @@ final class HostApiImpl: CoreHostApi {
 
   func sessionUploadFile(
     handle: Int64,
-    data: FlutterStandardTypedData,
+    bytes: FlutterStandardTypedData,
     metadata: GenericFileMetadata,
     completion: @escaping (Result<String, Error>) -> Void,
   ) {
@@ -184,7 +184,7 @@ final class HostApiImpl: CoreHostApi {
 
     Task { @MainActor in
       let token = await session.uploadFile(
-        data: data.data.map { Int8(bitPattern: $0) },
+        data: bytes.data.map { Int8(bitPattern: $0) },
         metadata: talkjs_core_swift.GenericFileMetadata(filename: metadata.filename),
       )
       completion(.success(token))
@@ -193,7 +193,7 @@ final class HostApiImpl: CoreHostApi {
 
   func sessionUploadImage(
     handle: Int64,
-    data: FlutterStandardTypedData,
+    bytes: FlutterStandardTypedData,
     metadata: ImageFileMetadata,
     completion: @escaping (Result<String, Error>) -> Void,
   ) {
@@ -208,7 +208,7 @@ final class HostApiImpl: CoreHostApi {
 
     Task { @MainActor in
       let token = await session.uploadImage(
-        data: data.data.map { Int8(bitPattern: $0) },
+        data: bytes.data.map { Int8(bitPattern: $0) },
         metadata: talkjs_core_swift.ImageFileMetadata(
           filename: metadata.filename,
           width: metadata.width.map { Int($0) },
@@ -221,7 +221,7 @@ final class HostApiImpl: CoreHostApi {
 
   func sessionUploadVideo(
     handle: Int64,
-    data: FlutterStandardTypedData,
+    bytes: FlutterStandardTypedData,
     metadata: VideoFileMetadata,
     completion: @escaping (Result<String, Error>) -> Void,
   ) {
@@ -236,7 +236,7 @@ final class HostApiImpl: CoreHostApi {
 
     Task { @MainActor in
       let token = await session.uploadVideo(
-        data: data.data.map { Int8(bitPattern: $0) },
+        data: bytes.data.map { Int8(bitPattern: $0) },
         metadata: talkjs_core_swift.VideoFileMetadata(
           filename: metadata.filename,
           duration: metadata.duration,
@@ -250,7 +250,7 @@ final class HostApiImpl: CoreHostApi {
 
   func sessionUploadAudio(
     handle: Int64,
-    data: FlutterStandardTypedData,
+    bytes: FlutterStandardTypedData,
     metadata: AudioFileMetadata,
     completion: @escaping (Result<String, Error>) -> Void,
   ) {
@@ -265,7 +265,7 @@ final class HostApiImpl: CoreHostApi {
 
     Task { @MainActor in
       let token = await session.uploadAudio(
-        data: data.data.map { Int8(bitPattern: $0) },
+        data: bytes.data.map { Int8(bitPattern: $0) },
         metadata: talkjs_core_swift.AudioFileMetadata(
           filename: metadata.filename,
           duration: metadata.duration,
@@ -277,7 +277,7 @@ final class HostApiImpl: CoreHostApi {
 
   func sessionUploadVoice(
     handle: Int64,
-    data: FlutterStandardTypedData,
+    bytes: FlutterStandardTypedData,
     metadata: VoiceRecordingFileMetadata,
     completion: @escaping (Result<String, Error>) -> Void,
   ) {
@@ -292,7 +292,7 @@ final class HostApiImpl: CoreHostApi {
 
     Task { @MainActor in
       let token = await session.uploadVoice(
-        data: data.data.map { Int8(bitPattern: $0) },
+        data: bytes.data.map { Int8(bitPattern: $0) },
         metadata: talkjs_core_swift.VoiceRecordingFileMetadata(
           filename: metadata.filename,
           duration: metadata.duration,
@@ -375,10 +375,10 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get()
-      completion(.success(snapshot.map {
+      let snapshot = await ref.get().map {
         String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
-      }))
+      }
+      completion(.success(snapshot))
     }
   }
 
@@ -627,10 +627,10 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get()
-      completion(.success(snapshot.map {
+      let snapshot = await ref.get().map {
         String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
-      }))
+      }
+      completion(.success(snapshot))
     }
   }
 
@@ -1230,10 +1230,10 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get()
-      completion(.success(snapshot.map {
+      let snapshot = await ref.get().map {
         String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
-      }))
+      }
+      completion(.success(snapshot))
     }
   }
 
@@ -1397,10 +1397,10 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get()
-      completion(.success(snapshot.map {
+      let snapshot = await ref.get().map {
         String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
-      }))
+      }
+      completion(.success(snapshot))
     }
   }
 
@@ -1555,66 +1555,5 @@ final class HostApiImpl: CoreHostApi {
       await ref.remove()
       completion(.success(()))
     }
-  }
-
-  // Test endpoints
-  func testContentSerialization(contentJson: String) throws -> String {
-    let content = try decodeContentBlocks(Data(contentJson.utf8))
-
-    let expected: [any ContentBlock] = try [
-      TextBlock(children: [
-        "> Ok, so this is pretty cool\n> This is all a ",
-        Markup(type: "bold", children: ["blockquote"]),
-        " block!\n> How cool is that, just use ",
-        CodeSpan(text: ">"),
-        ".\n\n> This is a ",
-        Markup(type: "italic", children: ["separate"]),
-        " blockquote tho\n\n",
-        CodeSpan(text: "~ok~"),
-        " ",
-        Markup(type: "bold", children: [
-          Markup(type: "italic", children: [
-            Markup(type: "strikethrough", children: ["test"]),
-          ]),
-        ]),
-        " ok, ",
-        Markup(type: "bold", children: ["_nice"]),
-        "_?  ",
-        Link(url: "https://talkjs.com", children: [
-          "test nice ", Markup(type: "bold", children: ["tool"]),
-        ]),
-        "\n\nSo here's the example:\n",
-        CodeSpan(text: "elixir\n{:ok, _} = GenServer.call(__MODULE__, \"*nice*\")\n"),
-        "\n\nAnd quadruple backticks to escape triple backticks w/o language:\n",
-        CodeSpan(text: "`\n"),
-        "elixir\n{:ok, ",
-        Markup(type: "italic", children: [
-          "} = ",
-          AutoLink(url: "http://GenServer.call", text: "GenServer.call"),
-          "(",
-        ]),
-        "_MODULE__, \"*nice*\")\n",
-        CodeSpan(text: "\n"),
-        "`\n\nEmoji and weird unicode 👪🏼 :arslan: :'( (note the weird apostrophe here)\n\n> EOF blockquote",
-      ]),
-      VideoBlock(
-        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        size: 100,
-        filename: "test_video",
-        fileToken: "token",
-        width: 640,
-        height: 480,
-        duration: 212.0,
-      ),
-    ]
-    if content != expected {
-      throw PigeonError(
-        code: "assertion-error",
-        message: "Content mismatch.\nExpected: \(expected)\nActual: \(content)",
-        details: "",
-      )
-    }
-
-    return String(data: try encodeContentBlocks(content), encoding: .utf8)!
   }
 }

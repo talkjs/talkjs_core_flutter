@@ -9,11 +9,19 @@ public class TalkjsCoreFlutterPlugin: NSObject, FlutterPlugin {
       binaryMessenger: registrar.messenger(),
       api: HostApiImpl(),
     )
+    TestHostApiSetup.setUp(
+      binaryMessenger: registrar.messenger(),
+      api: TestHostApiImpl(),
+    )
     registrar.publish(TalkjsCoreFlutterPlugin())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     CoreHostApiSetup.setUp(
+      binaryMessenger: registrar.messenger(),
+      api: nil,
+    )
+    TestHostApiSetup.setUp(
       binaryMessenger: registrar.messenger(),
       api: nil,
     )

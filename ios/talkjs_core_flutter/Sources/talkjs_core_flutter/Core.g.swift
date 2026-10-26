@@ -537,11 +537,11 @@ protocol CoreHostApi {
   func sessionConversation(handle: Int64, id: String) throws -> Int64
   func sessionSubscribeConversations(handle: Int64, subscriptionHandle: Int64) throws
   func sessionOnError(handle: Int64, subscriptionHandle: Int64) throws
-  func sessionUploadFile(handle: Int64, data: FlutterStandardTypedData, metadata: GenericFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
-  func sessionUploadImage(handle: Int64, data: FlutterStandardTypedData, metadata: ImageFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
-  func sessionUploadVideo(handle: Int64, data: FlutterStandardTypedData, metadata: VideoFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
-  func sessionUploadAudio(handle: Int64, data: FlutterStandardTypedData, metadata: AudioFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
-  func sessionUploadVoice(handle: Int64, data: FlutterStandardTypedData, metadata: VoiceRecordingFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
+  func sessionUploadFile(handle: Int64, bytes: FlutterStandardTypedData, metadata: GenericFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
+  func sessionUploadImage(handle: Int64, bytes: FlutterStandardTypedData, metadata: ImageFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
+  func sessionUploadVideo(handle: Int64, bytes: FlutterStandardTypedData, metadata: VideoFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
+  func sessionUploadAudio(handle: Int64, bytes: FlutterStandardTypedData, metadata: AudioFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
+  func sessionUploadVoice(handle: Int64, bytes: FlutterStandardTypedData, metadata: VoiceRecordingFileMetadata, completion: @escaping (Result<String, Error>) -> Void)
   func conversationListSubscriptionDeleteHandle(handle: Int64) throws
   func conversationListSubscriptionLoadMore(handle: Int64, count: Int64?, completion: @escaping (Result<Void, Error>) -> Void)
   func conversationListSubscriptionUnsubscribe(handle: Int64) throws
@@ -601,7 +601,6 @@ protocol CoreHostApi {
   func reactionDeleteHandle(handle: Int64) throws
   func reactionAdd(handle: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func reactionRemove(handle: Int64, completion: @escaping (Result<Void, Error>) -> Void)
-  func testContentSerialization(contentJson: String) throws -> String
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -716,9 +715,9 @@ class CoreHostApiSetup {
       sessionUploadFileChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let handleArg = args[0] as! Int64
-        let dataArg = args[1] as! FlutterStandardTypedData
+        let bytesArg = args[1] as! FlutterStandardTypedData
         let metadataArg = args[2] as! GenericFileMetadata
-        api.sessionUploadFile(handle: handleArg, data: dataArg, metadata: metadataArg) { result in
+        api.sessionUploadFile(handle: handleArg, bytes: bytesArg, metadata: metadataArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -735,9 +734,9 @@ class CoreHostApiSetup {
       sessionUploadImageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let handleArg = args[0] as! Int64
-        let dataArg = args[1] as! FlutterStandardTypedData
+        let bytesArg = args[1] as! FlutterStandardTypedData
         let metadataArg = args[2] as! ImageFileMetadata
-        api.sessionUploadImage(handle: handleArg, data: dataArg, metadata: metadataArg) { result in
+        api.sessionUploadImage(handle: handleArg, bytes: bytesArg, metadata: metadataArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -754,9 +753,9 @@ class CoreHostApiSetup {
       sessionUploadVideoChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let handleArg = args[0] as! Int64
-        let dataArg = args[1] as! FlutterStandardTypedData
+        let bytesArg = args[1] as! FlutterStandardTypedData
         let metadataArg = args[2] as! VideoFileMetadata
-        api.sessionUploadVideo(handle: handleArg, data: dataArg, metadata: metadataArg) { result in
+        api.sessionUploadVideo(handle: handleArg, bytes: bytesArg, metadata: metadataArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -773,9 +772,9 @@ class CoreHostApiSetup {
       sessionUploadAudioChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let handleArg = args[0] as! Int64
-        let dataArg = args[1] as! FlutterStandardTypedData
+        let bytesArg = args[1] as! FlutterStandardTypedData
         let metadataArg = args[2] as! AudioFileMetadata
-        api.sessionUploadAudio(handle: handleArg, data: dataArg, metadata: metadataArg) { result in
+        api.sessionUploadAudio(handle: handleArg, bytes: bytesArg, metadata: metadataArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -792,9 +791,9 @@ class CoreHostApiSetup {
       sessionUploadVoiceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let handleArg = args[0] as! Int64
-        let dataArg = args[1] as! FlutterStandardTypedData
+        let bytesArg = args[1] as! FlutterStandardTypedData
         let metadataArg = args[2] as! VoiceRecordingFileMetadata
-        api.sessionUploadVoice(handle: handleArg, data: dataArg, metadata: metadataArg) { result in
+        api.sessionUploadVoice(handle: handleArg, bytes: bytesArg, metadata: metadataArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -1811,7 +1810,20 @@ class CoreHostApiSetup {
     } else {
       reactionRemoveChannel.setMessageHandler(nil)
     }
-    let testContentSerializationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.talkjs_core_flutter.CoreHostApi.testContentSerialization\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+  }
+}
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol TestHostApi {
+  func testContentSerialization(contentJson: String) throws -> String
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class TestHostApiSetup {
+  static var codec: FlutterStandardMessageCodec { CorePigeonCodec.shared }
+  /// Sets up an instance of `TestHostApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: TestHostApi?, messageChannelSuffix: String = "") {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+    let testContentSerializationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.talkjs_core_flutter.TestHostApi.testContentSerialization\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       testContentSerializationChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

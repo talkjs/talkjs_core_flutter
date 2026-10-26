@@ -122,35 +122,35 @@ abstract class CoreHostApi {
   @async
   String sessionUploadFile(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     GenericFileMetadata metadata,
   );
 
   @async
   String sessionUploadImage(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     ImageFileMetadata metadata,
   );
 
   @async
   String sessionUploadVideo(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     VideoFileMetadata metadata,
   );
 
   @async
   String sessionUploadAudio(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     AudioFileMetadata metadata,
   );
 
   @async
   String sessionUploadVoice(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     VoiceRecordingFileMetadata metadata,
   );
 
@@ -359,7 +359,10 @@ abstract class CoreHostApi {
 
   @async
   void reactionRemove(int handle);
+}
 
+@HostApi()
+abstract class TestHostApi {
   // Test endpoints
   String testContentSerialization(String contentJson);
 }
