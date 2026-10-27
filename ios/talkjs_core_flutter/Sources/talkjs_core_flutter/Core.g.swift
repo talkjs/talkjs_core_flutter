@@ -531,7 +531,7 @@ class CorePigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol CoreHostApi {
-  func getTalkSession(appId: String, userId: String, token: String?, forceCreateNew: Bool?, signature: String?, apiUrls: ApiUrlOptions?, host: String?, clientBuild: String?) throws -> Int64
+  func getTalkSession(appId: String, userId: String, token: String?, forceCreateNew: Bool, signature: String?, apiUrls: ApiUrlOptions?, host: String?, clientBuild: String?) throws -> Int64
   func sessionDeleteHandle(handle: Int64) throws
   func sessionUser(handle: Int64, id: String) throws -> Int64
   func sessionConversation(handle: Int64, id: String) throws -> Int64
@@ -616,7 +616,7 @@ class CoreHostApiSetup {
         let appIdArg = args[0] as! String
         let userIdArg = args[1] as! String
         let tokenArg: String? = nilOrValue(args[2])
-        let forceCreateNewArg: Bool? = nilOrValue(args[3])
+        let forceCreateNewArg = args[3] as! Bool
         let signatureArg: String? = nilOrValue(args[4])
         let apiUrlsArg: ApiUrlOptions? = nilOrValue(args[5])
         let hostArg: String? = nilOrValue(args[6])

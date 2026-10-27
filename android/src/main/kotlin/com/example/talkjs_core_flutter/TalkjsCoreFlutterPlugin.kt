@@ -49,7 +49,7 @@ private class PigeonApiImplementation : CoreHostApi {
         appId: String,
         userId: String,
         token: String?,
-        forceCreateNew: Boolean?,
+        forceCreateNew: Boolean,
         signature: String?,
         apiUrls: ApiUrlOptions?,
         host: String?,
@@ -59,7 +59,7 @@ private class PigeonApiImplementation : CoreHostApi {
             appId = appId,
             userId = userId,
             token = token,
-            forceCreateNew = forceCreateNew == true,
+            forceCreateNew = forceCreateNew,
             signature = signature,
             apiUrls = apiUrls?.let {
                 com.talkjs.core.ApiUrlOptions(

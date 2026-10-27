@@ -567,7 +567,7 @@ private open class CorePigeonCodec : StandardMessageCodec() {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface CoreHostApi {
-  fun getTalkSession(appId: String, userId: String, token: String?, forceCreateNew: Boolean?, signature: String?, apiUrls: ApiUrlOptions?, host: String?, clientBuild: String?): Long
+  fun getTalkSession(appId: String, userId: String, token: String?, forceCreateNew: Boolean, signature: String?, apiUrls: ApiUrlOptions?, host: String?, clientBuild: String?): Long
   fun sessionDeleteHandle(handle: Long)
   fun sessionUser(handle: Long, id: String): Long
   fun sessionConversation(handle: Long, id: String): Long
@@ -655,7 +655,7 @@ interface CoreHostApi {
             val appIdArg = args[0] as String
             val userIdArg = args[1] as String
             val tokenArg = args[2] as String?
-            val forceCreateNewArg = args[3] as Boolean?
+            val forceCreateNewArg = args[3] as Boolean
             val signatureArg = args[4] as String?
             val apiUrlsArg = args[5] as ApiUrlOptions?
             val hostArg = args[6] as String?

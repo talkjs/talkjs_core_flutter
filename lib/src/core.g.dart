@@ -515,7 +515,7 @@ class CoreHostApi {
     String appId,
     String userId,
     String? token,
-    bool? forceCreateNew,
+    bool forceCreateNew,
     String? signature,
     ApiUrlOptions? apiUrls,
     String? host,

@@ -321,7 +321,7 @@ Future<TalkSession> getTalkSession({
   required String appId,
   required String userId,
   String? token,
-  bool? forceCreateNew,
+  bool forceCreateNew = false,
   String? signature,
   ApiUrlOptions? apiUrls,
   String? host,

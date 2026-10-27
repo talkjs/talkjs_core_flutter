@@ -24,7 +24,7 @@ final class HostApiImpl: CoreHostApi {
     appId: String,
     userId: String,
     token: String?,
-    forceCreateNew: Bool?,
+    forceCreateNew: Bool,
     signature: String?,
     apiUrls: ApiUrlOptions?,
     host: String?,
@@ -44,7 +44,7 @@ final class HostApiImpl: CoreHostApi {
           restApiHttpUrl: $0.restApiHttpUrl,
         )
       },
-      forceCreateNew: forceCreateNew == true,
+      forceCreateNew: forceCreateNew,
     )
 
     let handle = nextId
