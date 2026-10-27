@@ -567,17 +567,17 @@ private open class CorePigeonCodec : StandardMessageCodec() {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface CoreHostApi {
-  fun getTalkSession(appId: String, userId: String, token: String?, forceCreateNew: Boolean?, signature: String?, apiUrls: ApiUrlOptions?, host: String?, clientBuild: String?): Long
+  fun getTalkSession(appId: String, userId: String, token: String?, forceCreateNew: Boolean, signature: String?, apiUrls: ApiUrlOptions?, host: String?, clientBuild: String?): Long
   fun sessionDeleteHandle(handle: Long)
   fun sessionUser(handle: Long, id: String): Long
   fun sessionConversation(handle: Long, id: String): Long
   fun sessionSubscribeConversations(handle: Long, subscriptionHandle: Long)
   fun sessionOnError(handle: Long, subscriptionHandle: Long)
-  fun sessionUploadFile(handle: Long, data: ByteArray, metadata: GenericFileMetadata, callback: (Result<String>) -> Unit)
-  fun sessionUploadImage(handle: Long, data: ByteArray, metadata: ImageFileMetadata, callback: (Result<String>) -> Unit)
-  fun sessionUploadVideo(handle: Long, data: ByteArray, metadata: VideoFileMetadata, callback: (Result<String>) -> Unit)
-  fun sessionUploadAudio(handle: Long, data: ByteArray, metadata: AudioFileMetadata, callback: (Result<String>) -> Unit)
-  fun sessionUploadVoice(handle: Long, data: ByteArray, metadata: VoiceRecordingFileMetadata, callback: (Result<String>) -> Unit)
+  fun sessionUploadFile(handle: Long, bytes: ByteArray, metadata: GenericFileMetadata, callback: (Result<String>) -> Unit)
+  fun sessionUploadImage(handle: Long, bytes: ByteArray, metadata: ImageFileMetadata, callback: (Result<String>) -> Unit)
+  fun sessionUploadVideo(handle: Long, bytes: ByteArray, metadata: VideoFileMetadata, callback: (Result<String>) -> Unit)
+  fun sessionUploadAudio(handle: Long, bytes: ByteArray, metadata: AudioFileMetadata, callback: (Result<String>) -> Unit)
+  fun sessionUploadVoice(handle: Long, bytes: ByteArray, metadata: VoiceRecordingFileMetadata, callback: (Result<String>) -> Unit)
   fun conversationListSubscriptionDeleteHandle(handle: Long)
   fun conversationListSubscriptionLoadMore(handle: Long, count: Long?, callback: (Result<Unit>) -> Unit)
   fun conversationListSubscriptionUnsubscribe(handle: Long)
@@ -637,7 +637,6 @@ interface CoreHostApi {
   fun reactionDeleteHandle(handle: Long)
   fun reactionAdd(handle: Long, callback: (Result<Unit>) -> Unit)
   fun reactionRemove(handle: Long, callback: (Result<Unit>) -> Unit)
-  fun testContentSerialization(contentJson: String): String
 
   companion object {
     /** The codec used by CoreHostApi. */
@@ -656,7 +655,7 @@ interface CoreHostApi {
             val appIdArg = args[0] as String
             val userIdArg = args[1] as String
             val tokenArg = args[2] as String?
-            val forceCreateNewArg = args[3] as Boolean?
+            val forceCreateNewArg = args[3] as Boolean
             val signatureArg = args[4] as String?
             val apiUrlsArg = args[5] as ApiUrlOptions?
             val hostArg = args[6] as String?
@@ -770,9 +769,9 @@ interface CoreHostApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val handleArg = args[0] as Long
-            val dataArg = args[1] as ByteArray
+            val bytesArg = args[1] as ByteArray
             val metadataArg = args[2] as GenericFileMetadata
-            api.sessionUploadFile(handleArg, dataArg, metadataArg) { result: Result<String> ->
+            api.sessionUploadFile(handleArg, bytesArg, metadataArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CorePigeonUtils.wrapError(error))
@@ -792,9 +791,9 @@ interface CoreHostApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val handleArg = args[0] as Long
-            val dataArg = args[1] as ByteArray
+            val bytesArg = args[1] as ByteArray
             val metadataArg = args[2] as ImageFileMetadata
-            api.sessionUploadImage(handleArg, dataArg, metadataArg) { result: Result<String> ->
+            api.sessionUploadImage(handleArg, bytesArg, metadataArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CorePigeonUtils.wrapError(error))
@@ -814,9 +813,9 @@ interface CoreHostApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val handleArg = args[0] as Long
-            val dataArg = args[1] as ByteArray
+            val bytesArg = args[1] as ByteArray
             val metadataArg = args[2] as VideoFileMetadata
-            api.sessionUploadVideo(handleArg, dataArg, metadataArg) { result: Result<String> ->
+            api.sessionUploadVideo(handleArg, bytesArg, metadataArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CorePigeonUtils.wrapError(error))
@@ -836,9 +835,9 @@ interface CoreHostApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val handleArg = args[0] as Long
-            val dataArg = args[1] as ByteArray
+            val bytesArg = args[1] as ByteArray
             val metadataArg = args[2] as AudioFileMetadata
-            api.sessionUploadAudio(handleArg, dataArg, metadataArg) { result: Result<String> ->
+            api.sessionUploadAudio(handleArg, bytesArg, metadataArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CorePigeonUtils.wrapError(error))
@@ -858,9 +857,9 @@ interface CoreHostApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val handleArg = args[0] as Long
-            val dataArg = args[1] as ByteArray
+            val bytesArg = args[1] as ByteArray
             val metadataArg = args[2] as VoiceRecordingFileMetadata
-            api.sessionUploadVoice(handleArg, dataArg, metadataArg) { result: Result<String> ->
+            api.sessionUploadVoice(handleArg, bytesArg, metadataArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CorePigeonUtils.wrapError(error))
@@ -2030,8 +2029,24 @@ interface CoreHostApi {
           channel.setMessageHandler(null)
         }
       }
+    }
+  }
+}
+/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+interface TestHostApi {
+  fun testContentSerialization(contentJson: String): String
+
+  companion object {
+    /** The codec used by TestHostApi. */
+    val codec: MessageCodec<Any?> by lazy {
+      CorePigeonCodec()
+    }
+    /** Sets up an instance of `TestHostApi` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
+    fun setUp(binaryMessenger: BinaryMessenger, api: TestHostApi?, messageChannelSuffix: String = "") {
+      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.talkjs_core_flutter.CoreHostApi.testContentSerialization$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.talkjs_core_flutter.TestHostApi.testContentSerialization$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>

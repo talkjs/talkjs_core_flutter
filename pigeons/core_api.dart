@@ -7,6 +7,9 @@ import 'package:pigeon/pigeon.dart';
     kotlinOut:
         'android/src/main/kotlin/com/example/talkjs_core_flutter/Core.g.kt',
     kotlinOptions: KotlinOptions(package: 'com.example.talkjs_core_flutter'),
+    swiftOut:
+        'ios/talkjs_core_flutter/Sources/talkjs_core_flutter/Core.g.swift',
+    swiftOptions: SwiftOptions(),
     dartPackageName: 'talkjs_core_flutter',
   ),
 )
@@ -104,7 +107,7 @@ abstract class CoreHostApi {
     String appId,
     String userId,
     String? token,
-    bool? forceCreateNew,
+    bool forceCreateNew,
     String? signature,
     ApiUrlOptions? apiUrls,
     String? host,
@@ -119,35 +122,35 @@ abstract class CoreHostApi {
   @async
   String sessionUploadFile(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     GenericFileMetadata metadata,
   );
 
   @async
   String sessionUploadImage(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     ImageFileMetadata metadata,
   );
 
   @async
   String sessionUploadVideo(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     VideoFileMetadata metadata,
   );
 
   @async
   String sessionUploadAudio(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     AudioFileMetadata metadata,
   );
 
   @async
   String sessionUploadVoice(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     VoiceRecordingFileMetadata metadata,
   );
 
@@ -356,7 +359,10 @@ abstract class CoreHostApi {
 
   @async
   void reactionRemove(int handle);
+}
 
+@HostApi()
+abstract class TestHostApi {
   // Test endpoints
   String testContentSerialization(String contentJson);
 }
