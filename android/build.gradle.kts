@@ -74,7 +74,7 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.talkjs:core:0.2.0")
+    implementation("com.talkjs:core:0.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.mockito:mockito-core:5.0.0")

@@ -515,7 +515,7 @@ class CoreHostApi {
     String appId,
     String userId,
     String? token,
-    bool? forceCreateNew,
+    bool forceCreateNew,
     String? signature,
     ApiUrlOptions? apiUrls,
     String? host,
@@ -528,18 +528,17 @@ class CoreHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        appId,
-        userId,
-        token,
-        forceCreateNew,
-        signature,
-        apiUrls,
-        host,
-        clientBuild,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          appId,
+          userId,
+          token,
+          forceCreateNew,
+          signature,
+          apiUrls,
+          host,
+          clientBuild,
+        ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -657,7 +656,7 @@ class CoreHostApi {
 
   Future<String> sessionUploadFile(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     GenericFileMetadata metadata,
   ) async {
     final pigeonVar_channelName =
@@ -668,7 +667,7 @@ class CoreHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[handle, data, metadata],
+      <Object?>[handle, bytes, metadata],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -682,7 +681,7 @@ class CoreHostApi {
 
   Future<String> sessionUploadImage(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     ImageFileMetadata metadata,
   ) async {
     final pigeonVar_channelName =
@@ -693,7 +692,7 @@ class CoreHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[handle, data, metadata],
+      <Object?>[handle, bytes, metadata],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -707,7 +706,7 @@ class CoreHostApi {
 
   Future<String> sessionUploadVideo(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     VideoFileMetadata metadata,
   ) async {
     final pigeonVar_channelName =
@@ -718,7 +717,7 @@ class CoreHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[handle, data, metadata],
+      <Object?>[handle, bytes, metadata],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -732,7 +731,7 @@ class CoreHostApi {
 
   Future<String> sessionUploadAudio(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     AudioFileMetadata metadata,
   ) async {
     final pigeonVar_channelName =
@@ -743,7 +742,7 @@ class CoreHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[handle, data, metadata],
+      <Object?>[handle, bytes, metadata],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -757,7 +756,7 @@ class CoreHostApi {
 
   Future<String> sessionUploadVoice(
     int handle,
-    Uint8List data,
+    Uint8List bytes,
     VoiceRecordingFileMetadata metadata,
   ) async {
     final pigeonVar_channelName =
@@ -768,7 +767,7 @@ class CoreHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[handle, data, metadata],
+      <Object?>[handle, bytes, metadata],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -943,20 +942,19 @@ class CoreHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        handle,
-        name,
-        custom,
-        locale,
-        photoUrl,
-        role,
-        welcomeMessage,
-        email,
-        phone,
-        pushTokens,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          handle,
+          name,
+          custom,
+          locale,
+          photoUrl,
+          role,
+          welcomeMessage,
+          email,
+          phone,
+          pushTokens,
+        ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -985,20 +983,19 @@ class CoreHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        handle,
-        name,
-        custom,
-        locale,
-        photoUrl,
-        role,
-        welcomeMessage,
-        email,
-        phone,
-        pushTokens,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          handle,
+          name,
+          custom,
+          locale,
+          photoUrl,
+          role,
+          welcomeMessage,
+          email,
+          phone,
+          pushTokens,
+        ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -2086,10 +2083,28 @@ class CoreHostApi {
       isNullValid: true,
     );
   }
+}
+
+class TestHostApi {
+  /// Constructor for [TestHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  TestHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
 
   Future<String> testContentSerialization(String contentJson) async {
     final pigeonVar_channelName =
-        'dev.flutter.pigeon.talkjs_core_flutter.CoreHostApi.testContentSerialization$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.talkjs_core_flutter.TestHostApi.testContentSerialization$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
