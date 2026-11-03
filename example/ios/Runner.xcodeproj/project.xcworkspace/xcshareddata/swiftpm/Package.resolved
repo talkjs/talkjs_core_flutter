@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/talkjs/talkjs-core-swift.git",
       "state" : {
-        "revision" : "154e2076a570632c0cb75ea6064742ddff1ffaca",
-        "version" : "0.0.4"
+        "revision" : "5e6f78359fc4e0979d15b551eac327d943dd5698",
+        "version" : "0.0.6"
       }
     }
   ],

@@ -13,7 +13,7 @@ let package = Package(
   ],
   dependencies: [
     .package(name: "FlutterFramework", path: "../FlutterFramework"),
-    .package(url: "https://github.com/talkjs/talkjs-core-swift.git", from: "0.0.4"),
+    .package(url: "https://github.com/talkjs/talkjs-core-swift.git", from: "0.0.6"),
   ],
   targets: [
     .target(

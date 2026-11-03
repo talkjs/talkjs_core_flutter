@@ -30,8 +30,7 @@ final class HostApiImpl: CoreHostApi {
     host: String?,
     clientBuild: String?,
   ) throws -> Int64 {
-    // clientBuild is omitted because the Swift API doesn't expose it
-    let session = talkjs_core_swift.getTalkSession(
+    let session = try talkjs_core_swift.getTalkSession(
       appId: appId,
       userId: userId,
       host: host ?? "",
@@ -45,6 +44,7 @@ final class HostApiImpl: CoreHostApi {
         )
       },
       forceCreateNew: forceCreateNew,
+      clientBuild: clientBuild,
     )
 
     let handle = nextId
@@ -70,7 +70,7 @@ final class HostApiImpl: CoreHostApi {
       )
     }
 
-    let ref = session.user(id: id)
+    let ref = try session.user(id: id)
 
     let userHandle = nextId
     nextId += 1
@@ -89,7 +89,7 @@ final class HostApiImpl: CoreHostApi {
       )
     }
 
-    let ref = session.conversation(id: id)
+    let ref = try session.conversation(id: id)
 
     let conversationHandle = nextId
     nextId += 1
@@ -183,11 +183,15 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let token = await session.uploadFile(
-        data: bytes.data.map { Int8(bitPattern: $0) },
-        metadata: talkjs_core_swift.GenericFileMetadata(filename: metadata.filename),
-      )
-      completion(.success(token))
+      do {
+        let token = try await session.uploadFile(
+          data: bytes.data,
+          metadata: talkjs_core_swift.GenericFileMetadata(filename: metadata.filename),
+        )
+        completion(.success(token))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -207,15 +211,19 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let token = await session.uploadImage(
-        data: bytes.data.map { Int8(bitPattern: $0) },
-        metadata: talkjs_core_swift.ImageFileMetadata(
-          filename: metadata.filename,
-          width: metadata.width.map { Int($0) },
-          height: metadata.height.map { Int($0) },
-        ),
-      )
-      completion(.success(token))
+      do {
+        let token = try await session.uploadImage(
+          data: bytes.data,
+          metadata: talkjs_core_swift.ImageFileMetadata(
+            filename: metadata.filename,
+            width: metadata.width.map { Int($0) },
+            height: metadata.height.map { Int($0) },
+          ),
+        )
+        completion(.success(token))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -235,16 +243,20 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let token = await session.uploadVideo(
-        data: bytes.data.map { Int8(bitPattern: $0) },
-        metadata: talkjs_core_swift.VideoFileMetadata(
-          filename: metadata.filename,
-          duration: metadata.duration,
-          width: metadata.width.map { Int($0) },
-          height: metadata.height.map { Int($0) },
-        ),
-      )
-      completion(.success(token))
+      do {
+        let token = try await session.uploadVideo(
+          data: bytes.data,
+          metadata: talkjs_core_swift.VideoFileMetadata(
+            filename: metadata.filename,
+            duration: metadata.duration,
+            width: metadata.width.map { Int($0) },
+            height: metadata.height.map { Int($0) },
+          ),
+        )
+        completion(.success(token))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -264,14 +276,18 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let token = await session.uploadAudio(
-        data: bytes.data.map { Int8(bitPattern: $0) },
-        metadata: talkjs_core_swift.AudioFileMetadata(
-          filename: metadata.filename,
-          duration: metadata.duration,
-        ),
-      )
-      completion(.success(token))
+      do {
+        let token = try await session.uploadAudio(
+          data: bytes.data,
+          metadata: talkjs_core_swift.AudioFileMetadata(
+            filename: metadata.filename,
+            duration: metadata.duration,
+          ),
+        )
+        completion(.success(token))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -291,14 +307,18 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let token = await session.uploadVoice(
-        data: bytes.data.map { Int8(bitPattern: $0) },
-        metadata: talkjs_core_swift.VoiceRecordingFileMetadata(
-          filename: metadata.filename,
-          duration: metadata.duration,
-        ),
-      )
-      completion(.success(token))
+      do {
+        let token = try await session.uploadVoice(
+          data: bytes.data,
+          metadata: talkjs_core_swift.VoiceRecordingFileMetadata(
+            filename: metadata.filename,
+            duration: metadata.duration,
+          ),
+        )
+        completion(.success(token))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -375,10 +395,14 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get().map {
-        String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+      do {
+        let snapshot = try await ref.get().map {
+          String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+        }
+        completion(.success(snapshot))
+      } catch {
+        completion(.failure(error))
       }
-      completion(.success(snapshot))
     }
   }
 
@@ -405,18 +429,22 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.set(
-        name: name,
-        role: role,
-        photoUrl: photoUrl,
-        email: email,
-        custom: custom,
-        locale: locale,
-        phone: phone,
-        pushTokens: pushTokens,
-        welcomeMessage: welcomeMessage,
-      )
-      completion(.success(()))
+      do {
+        try await ref.set(
+          name: name,
+          role: role,
+          photoUrl: photoUrl,
+          email: email,
+          custom: custom,
+          locale: locale,
+          phone: phone,
+          pushTokens: pushTokens,
+          welcomeMessage: welcomeMessage,
+        )
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -443,18 +471,22 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.createIfNotExists(
-        name: name,
-        role: role,
-        photoUrl: photoUrl,
-        email: email,
-        custom: custom,
-        locale: locale,
-        phone: phone,
-        pushTokens: pushTokens,
-        welcomeMessage: welcomeMessage,
-      )
-      completion(.success(()))
+      do {
+        try await ref.createIfNotExists(
+          name: name,
+          role: role,
+          photoUrl: photoUrl,
+          email: email,
+          custom: custom,
+          locale: locale,
+          phone: phone,
+          pushTokens: pushTokens,
+          welcomeMessage: welcomeMessage,
+        )
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -473,8 +505,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.deleteFields(fields)
-      completion(.success(()))
+      do {
+        try await ref.deleteFields(fields)
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -627,10 +663,14 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get().map {
-        String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+      do {
+        let snapshot = try await ref.get().map {
+          String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+        }
+        completion(.success(snapshot))
+      } catch {
+        completion(.failure(error))
       }
-      completion(.success(snapshot))
     }
   }
 
@@ -661,7 +701,7 @@ final class HostApiImpl: CoreHostApi {
         let notify = try notifyJson.map {
           try JSONDecoder().decode(NotificationSettings.self, from: Data($0.utf8))
         }
-        await ref.set(
+        try await ref.set(
           subject: subject,
           photoUrl: photoUrl,
           welcomeMessages: welcomeMessages,
@@ -703,7 +743,7 @@ final class HostApiImpl: CoreHostApi {
         let notify = try notifyJson.map {
           try JSONDecoder().decode(NotificationSettings.self, from: Data($0.utf8))
         }
-        await ref.createIfNotExists(
+        try await ref.createIfNotExists(
           access: access,
           custom: custom,
           notify: notify,
@@ -733,8 +773,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.deleteFields(fields)
-      completion(.success(()))
+      do {
+        try await ref.deleteFields(fields)
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -752,8 +796,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.markAsRead()
-      completion(.success(()))
+      do {
+        try await ref.markAsRead()
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -771,8 +819,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.markAsUnread()
-      completion(.success(()))
+      do {
+        try await ref.markAsUnread()
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -790,8 +842,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.markAsTyping()
-      completion(.success(()))
+      do {
+        try await ref.markAsTyping()
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -804,7 +860,7 @@ final class HostApiImpl: CoreHostApi {
       )
     }
 
-    let ref = conversation.participant(user: user)
+    let ref = try conversation.participant(user: user)
 
     let participantHandle = nextId
     nextId += 1
@@ -823,7 +879,7 @@ final class HostApiImpl: CoreHostApi {
       )
     }
 
-    let ref = conversation.message(id: messageId)
+    let ref = try conversation.message(id: messageId)
 
     let messageHandle = nextId
     nextId += 1
@@ -853,19 +909,23 @@ final class HostApiImpl: CoreHostApi {
     nextId += 1
 
     Task { @MainActor in
-      let ref = await conversation.send(
-        text: text,
-        referencedMessage: referencedMessage,
-        custom: custom,
-      )
+      do {
+        let ref = try await conversation.send(
+          text: text,
+          referencedMessage: referencedMessage,
+          custom: custom,
+        )
 
-      messages[messageHandle] = ref
+        messages[messageHandle] = ref
 
-      completion(.success(MessageRefBuildData(
-        handle: messageHandle,
-        id: ref.id,
-        conversationId: ref.conversationId,
-      )))
+        completion(.success(MessageRefBuildData(
+          handle: messageHandle,
+          id: ref.id,
+          conversationId: ref.conversationId,
+        )))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -890,7 +950,7 @@ final class HostApiImpl: CoreHostApi {
 
     Task { @MainActor in
       do {
-        let ref = await conversation.send(
+        let ref = try await conversation.send(
           content: try decodeSendContentBlocks(Data(contentJson.utf8)),
           referencedMessage: referencedMessage,
           custom: custom,
@@ -1230,10 +1290,14 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get().map {
-        String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+      do {
+        let snapshot = try await ref.get().map {
+          String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+        }
+        completion(.success(snapshot))
+      } catch {
+        completion(.failure(error))
       }
-      completion(.success(snapshot))
     }
   }
 
@@ -1260,7 +1324,7 @@ final class HostApiImpl: CoreHostApi {
         let notify = try notifyJson.map {
           try JSONDecoder().decode(NotificationSettings.self, from: Data($0.utf8))
         }
-        await ref.set(
+        try await ref.set(
           access: access,
           notify: notify,
         )
@@ -1294,7 +1358,7 @@ final class HostApiImpl: CoreHostApi {
         let notify = try notifyJson.map {
           try JSONDecoder().decode(NotificationSettings.self, from: Data($0.utf8))
         }
-        await ref.edit(
+        try await ref.edit(
           access: access,
           notify: notify,
         )
@@ -1328,7 +1392,7 @@ final class HostApiImpl: CoreHostApi {
         let notify = try notifyJson.map {
           try JSONDecoder().decode(NotificationSettings.self, from: Data($0.utf8))
         }
-        await ref.createIfNotExists(
+        try await ref.createIfNotExists(
           access: access,
           notify: notify,
         )
@@ -1354,8 +1418,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.deleteFields(fields)
-      completion(.success(()))
+      do {
+        try await ref.deleteFields(fields)
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -1373,8 +1441,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.delete()
-      completion(.success(()))
+      do {
+        try await ref.delete()
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -1397,10 +1469,14 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      let snapshot = await ref.get().map {
-        String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+      do {
+        let snapshot = try await ref.get().map {
+          String(data: try! JSONEncoder().encode($0), encoding: .utf8)!
+        }
+        completion(.success(snapshot))
+      } catch {
+        completion(.failure(error))
       }
-      completion(.success(snapshot))
     }
   }
 
@@ -1420,11 +1496,15 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.edit(
-        text: text,
-        custom: custom,
-      )
-      completion(.success(()))
+      do {
+        try await ref.edit(
+          text: text,
+          custom: custom,
+        )
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -1445,7 +1525,7 @@ final class HostApiImpl: CoreHostApi {
 
     Task { @MainActor in
       do {
-        await ref.edit(
+        try await ref.edit(
           content: try decodeSendContentBlocks(Data(contentJson.utf8)),
           custom: custom,
         )
@@ -1471,8 +1551,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.deleteFields(fields)
-      completion(.success(()))
+      do {
+        try await ref.deleteFields(fields)
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -1490,8 +1574,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.delete()
-      completion(.success(()))
+      do {
+        try await ref.delete()
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -1504,7 +1592,7 @@ final class HostApiImpl: CoreHostApi {
       )
     }
 
-    let ref = message.reaction(emoji: emoji)
+    let ref = try message.reaction(emoji: emoji)
 
     let reactionHandle = nextId
     nextId += 1
@@ -1533,8 +1621,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.add()
-      completion(.success(()))
+      do {
+        try await ref.add()
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 
@@ -1552,8 +1644,12 @@ final class HostApiImpl: CoreHostApi {
     }
 
     Task { @MainActor in
-      await ref.remove()
-      completion(.success(()))
+      do {
+        try await ref.remove()
+        completion(.success(()))
+      } catch {
+        completion(.failure(error))
+      }
     }
   }
 }
